@@ -1,0 +1,3 @@
+- update stan to binomial outcomes
+- write prior data merge - summing outcomes, coding types
+- 

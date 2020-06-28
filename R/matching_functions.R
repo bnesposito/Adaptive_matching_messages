@@ -125,7 +125,7 @@ optimal_matching_lpSolve = function(predictions_all, m, n) {
 # putting it all together
 thompson_matching = function(prior_data, U, V, 
                              constraints=NULL) {
-  browser()
+
     posterior = coefficient_posterior(prior_data)
     
     # need to extract one draw from posterior here
