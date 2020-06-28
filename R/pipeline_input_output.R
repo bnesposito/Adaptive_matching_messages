@@ -9,6 +9,15 @@ parallel:::setDefaultClusterOptions(setup_strategy = "sequential")
 # sourcing code for simulating from posterior and calculating optimal matching
 source("matching_functions.R")
 
+# type codes to construct types U and V
+type_codes = tibble(
+    gender = c("F","F","M","M"),
+    country = c("IN", "US","IN", "US"),
+    string = c("Indian woman", "American woman", "Indian man", "American man"),
+    U= 1:4,
+    V=1:4
+)
+
 # read in qualtrics output files and merge them into consolidated and cleaned file
 prior_data_merge = function() {
     output_filenames = list.files("../Pipeline/Qualtrics_output/")
@@ -21,29 +30,44 @@ prior_data_merge = function() {
         map(read_csv) %>% 
         map(~ slice(.x, 3:n())) # dropping the first 2 rows
         
-    # create variable with source filename
+    # create variables with source filename, gender, country, side of match
     for (i in 1:length(output_filenames)) {
-        qualtrics_output[[i]]$sourcefile = output_filenames[1]
+        qualtrics_output[[i]]$sourcefile = output_filenames[i]
+        qualtrics_output[[i]]$gender = substr(output_filenames[i],1,1)
+        qualtrics_output[[i]]$country = substr(output_filenames[i],3,4)
+        qualtrics_output[[i]]$match_side = substr(output_filenames[i],6,6)
     }
     
-    qualtrics_output=
-        qualtrics_output %>%         
-        bind_rows() 
+    # which files correspond to senders?
+    sender = (map(output_filenames, substr, 6, 6)==1)
     
-    # calculate outcome variable as sum of scores
-    Y=qualtrics_output %>% 
+    # export merged senders file  
+    qualtrics_output[sender] %>%         
+        bind_rows() %>% 
+        left_join(type_codes,by = c("gender", "country")) %>% # merge in type to construct U and V 
+        write_csv(paste("../Pipeline/Match_files/",
+                        Sys.Date(), 
+                        "_merged_processed_output_senders", ".csv", sep = "" ))  
+    
+    qualtrics_output_receiver = 
+        qualtrics_output[!sender] %>% 
+        bind_rows() %>% 
+        left_join(type_codes,by = c("gender", "country")) # merge in type to construct U and V 
+        
+        
+    # calculate outcome variable as sum of scores for recipients
+    Y=qualtrics_output_receiver %>% 
         select(paste("Q", 101:113, sep=""))%>% 
         sapply(as.numeric) %>% 
         rowSums()
-        
-    qualtrics_output= qualtrics_output %>% 
+    
+    # export merged receivers file    
+    qualtrics_output_receiver %>% 
         mutate(Y=Y) %>% 
-        select(-one_of(paste("Q", 101:113, sep="")))
-        
-    qualtrics_output %>% 
-    write_csv(paste("../Pipeline/Match_files/",
-                    Sys.Date(), 
-                    "_merged_processed_output", ".csv", sep = "" ))    
+        write_csv(paste("../Pipeline/Match_files/",
+                        Sys.Date(), 
+                        "_merged_processed_output_receivers", ".csv", sep = "" ))  
+    
 }
 
 
@@ -68,7 +92,7 @@ prior_data_to_match = function(prior_data_file="thompson_test.csv"){
     best_matching = thompson_matching(prior_data, U, V)
     
     # write to dated file with new matching
-    write_csv2(best_matching$matching,
+    write_csv(best_matching$matching,
                 paste("../Pipeline/Match_files/", 
                       Sys.Date(), "_matching.csv", sep = "" ))
 }
@@ -76,14 +100,40 @@ prior_data_to_match = function(prior_data_file="thompson_test.csv"){
 
 
 # read in daily match file, export recipient types to sender folders
-match_to_sender_surveys = function(){
+# index is current running index for Qualtrics for each of the 4 types 
+match_to_sender_surveys = function(index = c(0,0,0,0)){
+    matching = paste("../Pipeline/Match_files/", 
+          Sys.Date(), "_matching.csv", sep = "" ) %>% 
+        read_csv() %>% 
+        left_join(type_codes[-5],by = "U")
     
+    for (i in 1:nrow(matching)) {
+        # update running index for each of the sender types
+        index[matching[[i, "U"]]] = index[matching[[i, "U"]]] +1
+        
+        recipient_path = paste("../Pipeline/Qualtrics_input/", 
+                               matching[i, "gender"], "-",
+                               matching[i, "country"],
+                               "-1/", index[matching[[i, "U"]]],
+                               "_recipient.txt", sep="")
+
+        write(matching[[i,"string"]], recipient_path)
+    }
 }
 
 
 # read in message file, export sender types and messages to recipient folders
 messages_to_recipient_surveys = function(){
+    # read in compiled data from senders
+    merged_processed_output_senders =
+        read_csv(paste("../Pipeline/Match_files/",
+                        Sys.Date(), 
+                        "_merged_processed_output_senders", ".csv", sep = "" ))
     
+    for (i in 1:nrow(merged_processed_output_senders)){
+        message = merged_processed_output_senders[i,"Q1"]
+        
+    }
 }
 
 
