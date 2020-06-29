@@ -6,7 +6,7 @@ library(lpSolve) # For finding the optimal matching
 # store it, so it can be re-used next time, if the stan file has not changed
 rstan_options(auto_write = TRUE)
 logit_stan_model = stan_model("additive_effects_logit.stan")
-
+binomial_logit_stan_model = stan_model("additive_effects_binomial_logit.stan")
 
 
 
@@ -16,18 +16,19 @@ predictor_matrix = function(data) {
   model.matrix(~U:V-1, data)
 }
 
-# use stan to sample from posterior for the logistic random effects regression model
-coefficient_posterior = function(data) {
+# use stan to sample from posterior for the binomial logistic random effects regression model
+coefficient_posterior = function(data, n_Y= 13*4) {
   data_list = list(
     N = as.integer(nrow(data)),
     dim_U = length(levels(factor(data$U))),
     dim_V = length(levels(factor(data$V))),
+    n_Y = n_Y, #maximum value that Y can take
     X = predictor_matrix(data),
     Y = data$y
   )
   
   sampling(
-    logit_stan_model,
+    binomial_logit_stan_model,
     data = data_list,
     show_messages = F, # suppress output
     refresh = 0, # suppress output

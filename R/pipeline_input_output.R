@@ -123,7 +123,7 @@ match_to_sender_surveys = function(index = c(0,0,0,0)){
 
 
 # read in message file, export sender types and messages to recipient folders
-messages_to_recipient_surveys = function(){
+messages_to_recipient_surveys = function(index = c(0,0,0,0)){
     # read in compiled data from senders
     merged_processed_output_senders =
         read_csv(paste("../Pipeline/Match_files/",
@@ -131,8 +131,19 @@ messages_to_recipient_surveys = function(){
                         "_merged_processed_output_senders", ".csv", sep = "" ))
     
     for (i in 1:nrow(merged_processed_output_senders)){
-        message = merged_processed_output_senders[i,"Q1"]
+    # NEED TO CHANGE THIS TO GET THE RIGHT V    
+        V= 1 # merged_processed_output_senders[[i, "V"]]
+        message = merged_processed_output_senders[[i,"Q1"]]
+        sender = merged_processed_output_senders[[i,"string"]]
         
+        index[V] = index[V] +1
+        
+        # # path for storing file with message for recipient
+        # message_path = paste("../Pipeline/Qualtrics_input/", row["recipient"], "-2/", index,
+        #                      "_msg.txt", sep="")
+        # # path for storing file with sender type (in recipient folder)
+        # sender_path = paste("../Pipeline/Qualtrics_input/", row["recipient"], "-2/", index,
+        #                     "_sender.txt", sep="")
     }
 }
 
@@ -144,7 +155,7 @@ update_github = function(repo = "../") {
     git_add(files = "*", repo = repo)
     
     git_commit(repo = repo,
-               message = paste0("Update as at: ", Sys.time()))
+               message = paste0("Update: ", Sys.time()))
     
     # this uses my stored ssh key
     git_push(repo = repo)
