@@ -17,34 +17,34 @@
 The adaptive matching procedure is based on repeatedly performing the following steps:
 
 1. Message senders compose messages on Qualtrics.
-  - The senders are instructed to write to recipient types based on the text files ***index**-recipient.txt* in the subfolders *Pipeline/Qualtrics_input/**gender**-**country**-1*, stored on Github.
-  - Index is a running index for each sender type, updated by Qualtrics for each sender.
-2. The messages get pushed via sftp to *Pipeline/Qualtrics_output/Senders* on a local computer. 
-  - The messages are stored in files with names of the format ***gender**-**country**-1-**date**.csv*
-  - The messages are stored in the variable *Q1* in these files.
-  - The recipient types for the messages are stored in the variable **???**
-3. The function *match_to_sender_surveys* in *matching_functions.R* distributes the messages.
-  - It reads in the messages downloaded in the previous step,
-  - and distributes them to the right recipient subfolders *Pipeline/Qualtrics_input/**gender**-**country**-2*,
-  - based on the variable **???**.
-4. The function *update_github()* in *matching_functions.R* uploads these messages to Github.
-5. Message recipients read and evaluate messages on Qualtrics.
-  - They see messages based on the text files ***index**-msg.txt* in the subfolders *Pipeline/Qualtrics_input/**gender**-**country**-2*, stored on Github.
-  - They see messages based on the text files ***index**-sender.txt* in the same subfolders.
-  - Index is a running index for each recipient type, updated by Qualtrics for each recipient.
-6. The recipient evaluations get pushed via sftp to *Pipeline/Qualtrics_output/Receivers* on a local computer. 
-  - The message evaluations are stored in files with names of the format ***gender**-**country**-2-**date**.csv*
-  - The messages are stored in the variables *Q101* to *Q113* in these files.
-  - The sender types for the messages are stored in the variable **???**  
-7. The Thompson-matching for the next batch of senders and recipients is calculated on a local computer.
-  - The evaluation *Y* of messages is calculated as sum of these variables *Q101* to *Q113*.
-  - The function *prior_data_to_match()* reads in *Pipeline/Match_files/**date**_merged_processed_output_receivers.csv*, calculates the proposed matching, and stores it in *Pipeline/Match_files/**date**_matching.csv*,
-  - The function *coefficient_posterior()* in *matching_functions.R* is used to sample from the posterior of a binomial logit fixed effects model.
-  - The function *optimal_matching_lpSolve()* in *matching_functions.R* is used to calculate an optimal matching for a draw from this posterior.
-8. The function *match_to_sender_surveys()* in *matching_functions.R*  distributes the recipient types.
-  - It reads in *Pipeline/Match_files/**date**_matching.csv* created in the previous step,
-  - and distributes recipient types to the right recipient subfolders *Pipeline/Qualtrics_input/**gender**-**country**-2*.
-9. The function *update_github()* in *matching_functions.R* uploads these recipient types for the next batch to Github.
+   - The senders are instructed to write to recipient types based on the text files ***index**-recipient.txt* in the subfolders *Pipeline/Qualtrics_input/**gender**-**country**-1*, stored on Github.
+   - Index is a running index for each sender type, updated by Qualtrics for each sender.
+1. The messages get pushed via sftp to *Pipeline/Qualtrics_output/Senders* on a local computer. 
+   - The messages are stored in files with names of the format ***gender**-**country**-1-**date**.csv*
+   - The messages are stored in the variable *Q1* in these files.
+   - The recipient types for the messages are stored in the variable **???**
+1. The function *match_to_sender_surveys* in *matching_functions.R* distributes the messages.
+   - It reads in the messages downloaded in the previous step,
+   - and distributes them to the right recipient subfolders *Pipeline/Qualtrics_input/**gender**-**country**-2*,
+   - based on the variable **???**.
+1. The function *update_github()* in *matching_functions.R* uploads these messages to Github.
+1. Message recipients read and evaluate messages on Qualtrics.
+   - They see messages based on the text files ***index**-msg.txt* in the subfolders *Pipeline/Qualtrics_input/**gender**-**country**-2*, stored on Github.
+   - They see messages based on the text files ***index**-sender.txt* in the same subfolders.
+   - Index is a running index for each recipient type, updated by Qualtrics for each recipient.
+1. The recipient evaluations get pushed via sftp to *Pipeline/Qualtrics_output/Receivers* on a local computer. 
+   - The message evaluations are stored in files with names of the format ***gender**-**country**-2-**date**.csv*
+   - The messages are stored in the variables *Q101* to *Q113* in these files.
+   - The sender types for the messages are stored in the variable **???**  
+1. The Thompson-matching for the next batch of senders and recipients is calculated on a local computer.
+   - The evaluation *Y* of messages is calculated as sum of these variables *Q101* to *Q113*.
+   - The function *prior_data_to_match()* reads in *Pipeline/Match_files/**date**_merged_processed_output_receivers.csv*, calculates the proposed matching, and stores it in *Pipeline/Match_files/**date**_matching.csv*,
+   - The function *coefficient_posterior()* in *matching_functions.R* is used to sample from the posterior of a binomial logit fixed effects model.
+   - The function *optimal_matching_lpSolve()* in *matching_functions.R* is used to calculate an optimal matching for a draw from this posterior.
+1. The function *match_to_sender_surveys()* in *matching_functions.R*  distributes the recipient types.
+   - It reads in *Pipeline/Match_files/**date**_matching.csv* created in the previous step,
+   - and distributes recipient types to the right recipient subfolders *Pipeline/Qualtrics_input/**gender**-**country**-2*.
+1. The function *update_github()* in *matching_functions.R* uploads these recipient types for the next batch to Github.
 
 
 ## Sampling from the posterior 
