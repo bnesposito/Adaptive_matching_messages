@@ -9,6 +9,7 @@
   DONE
 
 - maintain running indices for Qualtrics files
+Maybe just based on existing files?
 
 - read in types
 
