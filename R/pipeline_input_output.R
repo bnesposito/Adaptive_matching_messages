@@ -9,6 +9,9 @@ parallel:::setDefaultClusterOptions(setup_strategy = "sequential")
 # sourcing code for simulating from posterior and calculating optimal matching
 source("matching_functions.R")
 
+# number of types
+k=4 
+
 # type codes to construct types U and V
 type_codes = tibble(
     gender = c("F","F","M","M"),
@@ -19,7 +22,7 @@ type_codes = tibble(
 )
 
 # read in qualtrics output files and merge them into consolidated and cleaned file
-prior_data_senders_merge = function() {
+prior_data_senders_merge = function(wave) {
     output_filenames = list.files("../Pipeline/Qualtrics_output/Senders/")
     
     output_filepaths = paste("../Pipeline/Qualtrics_output/Senders/", 
@@ -41,8 +44,7 @@ prior_data_senders_merge = function() {
     qualtrics_output %>%         
         bind_rows() %>% 
         left_join(type_codes,by = c("gender", "country")) %>% # merge in type to construct U and V 
-        write_csv(paste("../Pipeline/Match_files/",
-                        Sys.Date(), 
+        write_csv(paste("../Pipeline/Match_files/", wave, 
                         "_merged_processed_output_senders", ".csv", sep = "" ))  
 }
 
@@ -50,7 +52,7 @@ prior_data_senders_merge = function() {
 
 
 # read in qualtrics output files and merge them into consolidated and cleaned file
-prior_data_recpients_merge = function() {
+prior_data_recpients_merge = function(wave) {
     output_filenames = list.files("../Pipeline/Qualtrics_output/Receivers/")
     
     output_filepaths = paste("../Pipeline/Qualtrics_output/Receivers/", 
@@ -78,95 +80,105 @@ prior_data_recpients_merge = function() {
     Y=qualtrics_output_receiver %>% 
         select(paste("Q", 101:113, sep=""))%>% 
         sapply(as.numeric) %>% 
-        rowSums()
+        rowSums() - 13
     
     # export merged receivers file    
     qualtrics_output_receiver %>% 
         mutate(Y=Y) %>% 
-        write_csv(paste("../Pipeline/Match_files/",
-                        Sys.Date(), 
+        write_csv(paste("../Pipeline/Match_files/", wave, 
                         "_merged_processed_output_receivers", ".csv", sep = "" ))  
     
 }
 
 
+# Function to create the match and assignment for the first wave senders
+matching_first_wave = function() {
+    tibble(U = factor(rep(1:k, length.out = k^2, each=k), levels=1:k),
+           V = factor(rep(1:k, length.out = k^2), levels=1:k),
+           index_U = rep(1:k, length.out = k^2),
+           index_V = rep(1:k, length.out = k^2, each=k)) %>% 
+    write_csv("../Pipeline/Match_files/1_matching.csv")
+}
 
+# read in prior data, run Thompson sampling, and store result in daily match file
+prior_data_to_matching = function(wave){
+    prior_data_path = paste("../Pipeline/Match_files/", wave, 
+                    "_merged_processed_output_receivers", ".csv", sep = "" )
+    # FOR DEBUGGING ONLY
+    prior_data_path = "../Pipeline/Match_files/thompson_test.csv"
 
-# read in prior data, run thompson sampling, and store result in daily match file
-prior_data_to_match = function(prior_data_file="thompson_test.csv"){
-    # number of types
-    k=4 
-    
     # read in prior outcome data
-    prior_data = read_csv(paste("../Pipeline/Match_files/", 
-                                 prior_data_file, sep = "" )) %>% 
+    prior_data = read_csv(prior_data_path) %>% 
         mutate(U=factor(U, levels=1:k), 
                V=factor(V, levels=1:k))
     
     # generate types for new wave
-    U= tibble(U=factor(rep(1:k, length.out = k^2, each=k), levels=1:k))
-    V= tibble(V=factor(rep(1:k, length.out = k^2), levels=1:k))
+    U= tibble(U=factor(rep(1:k, length.out = k^2), levels=1:k),
+              index_U = wave*k + rep(1:k, length.out = k^2, each=k))
+    V= tibble(V=factor(rep(1:k, length.out = k^2), levels=1:k),
+              index_V = wave*k + rep(1:k, length.out = k^2, each=k))
     
+# NEED TO MAKE SURE THIS KEEPS INDICES!    
     # calculate thompson matching for the next wave
     best_matching = thompson_matching(prior_data, U, V)
     
     # write to dated file with new matching
     write_csv(best_matching$matching,
-                paste("../Pipeline/Match_files/", 
-                      Sys.Date(), "_matching.csv", sep = "" ))
+              paste("../Pipeline/Match_files/", wave, "_matching.csv", sep = "" ))
 }
 
 
 
 # read in daily match file, export recipient types to sender folders
 # index is current running index for Qualtrics for each of the 4 types 
-match_to_sender_surveys = function(index = c(0,0,0,0)){
-    matching = paste("../Pipeline/Match_files/", 
-          Sys.Date(), "_matching.csv", sep = "" ) %>% 
+matching_to_sender_surveys = function(wave){
+    matching = paste("../Pipeline/Match_files/", wave, 
+                     "_matching.csv", sep = "" ) %>% 
         read_csv() %>% 
-        left_join(type_codes[-5],by = "U")
+        left_join(type_codes[-c(3,5)],by = "U") %>%  # merge in sender characteristics for sender path
+        left_join(type_codes[c(3,5)], by = "V") # merge in recipient characteristics for survey content
     
     for (i in 1:nrow(matching)) {
-        # update running index for each of the sender types
-        index[matching[[i, "U"]]] = index[matching[[i, "U"]]] +1
-        
-        recipient_path = paste("../Pipeline/Qualtrics_input/", 
+        sender_path = paste("../Pipeline/Qualtrics_input/", 
                                matching[i, "gender"], "-",
                                matching[i, "country"],
-                               "-1/", index[matching[[i, "U"]]],
-                               "_recipient.txt", sep="")
-
-        write(matching[[i,"string"]], recipient_path)
+                               "-1/", sep="")
+        
+        write(matching[[i,"string"]], 
+              paste(sender_path, matching[[i, "index_U"]], "_recipient.txt", sep=""))
     }
 }
 
 
 # read in message file, export sender types and messages to recipient folders
-messages_to_recipient_surveys = function(index = c(0,0,0,0)){
-    # read in compiled data from senders
-    merged_processed_output_senders =
-        read_csv(paste("../Pipeline/Match_files/",
-                        Sys.Date(), 
-                        "_merged_processed_output_senders", ".csv", sep = "" ))
+messages_to_recipient_surveys = function(wave){
+    # # read in compiled data from senders
+    # merged_processed_output_senders =
+    #     read_csv(paste("../Pipeline/Match_files/", wave, 
+    #                    "_merged_processed_output_senders", ".csv", sep = "" ))
     
-    for (i in 1:nrow(merged_processed_output_senders)){
-    # NEED TO CHANGE THIS TO GET THE RIGHT V    
-        V= 1 # merged_processed_output_senders[[i, "V"]]
-        message = merged_processed_output_senders[[i,"Q1"]]
-        sender = merged_processed_output_senders[[i,"string"]]
+    matching = paste("../Pipeline/Match_files/", wave, 
+                     "_matching.csv", sep = "" ) %>% 
+        read_csv() %>% 
+        left_join(type_codes[-c(3,4)],by = "V") %>%  # merge in recipient characteristics for recipient path
+        left_join(type_codes[c(3,4)], by = "U") # merge in sender characteristics for survey content
+    
+    for (i in 1:nrow(matching)) {
+        recipient_path = paste("../Pipeline/Qualtrics_input/", 
+                            matching[i, "gender"], "-",
+                            matching[i, "country"],
+                            "-2/", sep="")
         
-        index[V] = index[V] +1
+        write(matching[[i,"string"]], 
+              paste(recipient_path, matching[[i, "index_V"]], "_sender.txt", sep=""))
         
-        # # path for storing file with message for recipient
-        # message_path = paste("../Pipeline/Qualtrics_input/", row["recipient"], "-2/", index,
-        #                      "_msg.txt", sep="")
-        # # path for storing file with sender type (in recipient folder)
-        # sender_path = paste("../Pipeline/Qualtrics_input/", row["recipient"], "-2/", index,
-        #                     "_sender.txt", sep="")
+# TO BE CONTINUED        
+        # message = merged_processed_output_senders[[i,"Q25"]]
+        # 
+        # write(matching[[i,"string"]], recipient_path)
     }
+    
 }
-
-
 
 
 # commit and push all files in Qualtrics_input folder to Github
@@ -179,3 +191,20 @@ update_github = function(repo = "../") {
     # this uses my stored ssh key
     git_push(repo = repo)
 }
+
+
+# Master functions for the two stages of each wave in the experiment
+sender_to_receiver_master = function(wave) {
+    prior_data_senders_merge(wave)
+    messages_to_recipient_surveys(wave)
+    update_github()
+}
+
+receiver_to_sender_master = function(wave) {
+    prior_data_receivers_merge(wave)
+    prior_data_to_matching(wave)
+    matching_to_sender_surveys(wave)
+    update_github()
+}
+
+

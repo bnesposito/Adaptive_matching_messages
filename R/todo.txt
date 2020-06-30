@@ -8,10 +8,45 @@
 - update file paths
   DONE
 
-- maintain running indices for Qualtrics files
-Maybe just based on existing files?
+- index everything by waves rather than dates!!!
+  DONE
+- text message: use Q25
+  DONE
 
-- read in types
 
 Questions:
 - When qualtrics pushes, do we get everything, or just the new stuff?
+A: only the new stuff (probably)
+
+
+scores go from 1 to 5!
+
+
+step 2: we only get the most recent ones
+merge all the files
+
+
+recipient type is not stored? (unclear)
+
+ID is the running variable, based on which we read in text files
+use this to recover the recipient / sender type?
+Wait?
+
+
+MTurk posting of hits? Each wave have to do twice!
+Manually.
+2 day waves?
+every day post 4 hits
+every day run R code once the data are in.
+
+
+
+model for Y: maybe include a match specific effect into logit?
+
+Daniel Q: always delete the first 2 rows?
+
+
+(multiple waves a day?)
+
+15:42:11	 From Daniel : recipients: https://econresearch.eu.qualtrics.com/jfe/preview/SV_8lcFnygABjQwwOF?Q_SurveyVersionID=current&Q_CHL=preview
+15:45:12	 From Daniel : senders: https://econresearch.eu.qualtrics.com/jfe/preview/SV_5nXTB7elo4LDwDX?Q_SurveyVersionID=current&Q_CHL=preview
