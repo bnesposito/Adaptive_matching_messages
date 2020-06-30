@@ -38,7 +38,7 @@ The adaptive matching procedure is based on repeatedly performing the following 
    - The running index of recipients of each recipient type is stored in the variable *ID*.
 1. The Thompson-matching for the next batch of senders and recipients is calculated on a local computer.
    - The evaluation *Y* of messages is calculated as sum of these variables *Q101* to *Q113*.
-   - The function *prior_data_to_match()* reads in *Pipeline/Match_files/**date**_merged_processed_output_receivers.csv*, calculates the proposed matching, and stores it in *Pipeline/Match_files/**date**_matching.csv*,
+   - The function *prior_data_to_match()* reads in *Pipeline/Match_files/**wave**_merged_processed_output_receivers.csv*, calculates the proposed matching, and stores it in *Pipeline/Match_files/**wave**_matching.csv*,
    - The function *coefficient_posterior()* in *matching_functions.R* is used to sample from the posterior of a binomial logit fixed effects model.
    - The function *optimal_matching_lpSolve()* in *matching_functions.R* is used to calculate an optimal matching for a draw from this posterior.
 1. The function *match_to_sender_surveys()* in *pipeline_input_output.R*  distributes the recipient types.
