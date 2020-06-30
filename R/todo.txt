@@ -1,3 +1,16 @@
 - update stan to binomial outcomes
+  DONE
 - write prior data merge - summing outcomes, coding types
-- 
+
+- split data merge into 2 functions
+  DONE
+
+- update file paths
+  DONE
+
+- maintain running indices for Qualtrics files
+
+- read in types
+
+Questions:
+- When qualtrics pushes, do we get everything, or just the new stuff?

@@ -19,10 +19,10 @@ type_codes = tibble(
 )
 
 # read in qualtrics output files and merge them into consolidated and cleaned file
-prior_data_merge = function() {
-    output_filenames = list.files("../Pipeline/Qualtrics_output/")
+prior_data_senders_merge = function() {
+    output_filenames = list.files("../Pipeline/Qualtrics_output/Senders/")
     
-    output_filepaths = paste("../Pipeline/Qualtrics_output/", 
+    output_filepaths = paste("../Pipeline/Qualtrics_output/Senders/", 
                              output_filenames , sep="")
     
     # Reading in all files in output folder 
@@ -35,26 +35,45 @@ prior_data_merge = function() {
         qualtrics_output[[i]]$sourcefile = output_filenames[i]
         qualtrics_output[[i]]$gender = substr(output_filenames[i],1,1)
         qualtrics_output[[i]]$country = substr(output_filenames[i],3,4)
-        qualtrics_output[[i]]$match_side = substr(output_filenames[i],6,6)
     }
     
-    # which files correspond to senders?
-    sender = (map(output_filenames, substr, 6, 6)==1)
-    
     # export merged senders file  
-    qualtrics_output[sender] %>%         
+    qualtrics_output %>%         
         bind_rows() %>% 
         left_join(type_codes,by = c("gender", "country")) %>% # merge in type to construct U and V 
         write_csv(paste("../Pipeline/Match_files/",
                         Sys.Date(), 
                         "_merged_processed_output_senders", ".csv", sep = "" ))  
+}
+
+
+
+
+# read in qualtrics output files and merge them into consolidated and cleaned file
+prior_data_recpients_merge = function() {
+    output_filenames = list.files("../Pipeline/Qualtrics_output/Receivers/")
     
+    output_filepaths = paste("../Pipeline/Qualtrics_output/Receivers/", 
+                             output_filenames , sep="")
+    
+    # Reading in all files in output folder 
+    qualtrics_output = output_filepaths %>% 
+        map(read_csv) %>% 
+        map(~ slice(.x, 3:n())) # dropping the first 2 rows
+    
+    # create variables with source filename, gender, country, side of match
+    for (i in 1:length(output_filenames)) {
+        qualtrics_output[[i]]$sourcefile = output_filenames[i]
+        qualtrics_output[[i]]$gender = substr(output_filenames[i],1,1)
+        qualtrics_output[[i]]$country = substr(output_filenames[i],3,4)
+    }
+
     qualtrics_output_receiver = 
-        qualtrics_output[!sender] %>% 
+        qualtrics_output %>% 
         bind_rows() %>% 
         left_join(type_codes,by = c("gender", "country")) # merge in type to construct U and V 
-        
-        
+    
+    
     # calculate outcome variable as sum of scores for recipients
     Y=qualtrics_output_receiver %>% 
         select(paste("Q", 101:113, sep=""))%>% 
