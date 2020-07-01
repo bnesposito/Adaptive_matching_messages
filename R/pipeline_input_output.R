@@ -80,7 +80,7 @@ prior_data_recpients_merge = function(wave) {
     Y=qualtrics_output_receiver %>% 
         select(paste("Q", 101:113, sep=""))%>% 
         sapply(as.numeric) %>% 
-        rowSums() - 13
+        rowSums() - 13 # so that values start at 0
     
     # export merged receivers file    
     qualtrics_output_receiver %>% 
@@ -114,11 +114,10 @@ prior_data_to_matching = function(wave){
     
     # generate types for new wave
     U= tibble(U=factor(rep(1:k, length.out = k^2), levels=1:k),
-              index_U = wave*k + rep(1:k, length.out = k^2, each=k))
+              index_U = (wave-1)*k + rep(1:k, length.out = k^2, each=k))
     V= tibble(V=factor(rep(1:k, length.out = k^2), levels=1:k),
-              index_V = wave*k + rep(1:k, length.out = k^2, each=k))
+              index_V = (wave-1)*k + rep(1:k, length.out = k^2, each=k))
     
-# NEED TO MAKE SURE THIS KEEPS INDICES!    
     # calculate thompson matching for the next wave
     best_matching = thompson_matching(prior_data, U, V)
     
@@ -207,4 +206,10 @@ receiver_to_sender_master = function(wave) {
     update_github()
 }
 
-
+# clear out all the Qualtrics input files, for a clean slate
+clear_subfolders = function(path="../Pipeline/Qualtrics_input/"){
+    filelist=list.files(path, recursive=T)
+    
+    walk(paste(path, filelist, sep=""),
+         file.remove)
+}

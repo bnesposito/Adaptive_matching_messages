@@ -42,8 +42,8 @@ coefficient_posterior = function(data, n_Y= 13*4) {
 # create predicted outcomes for all possible matches of elements of the factors  U and V
 # create data frame with all combinations of U and V, and i,j as indices
 predictions_all_combinations = function(beta, U, V) { 
-    all_combinations = merge(tibble(U=factor(U)) %>% mutate(i=row_number()), 
-                             tibble(V=factor(V)) %>% mutate(j=row_number()))
+    all_combinations = merge(U %>% mutate(i=row_number()), 
+                             V %>% mutate(j=row_number()))
     
     # add predictions from logit model
     all_combinations %>%
@@ -136,7 +136,7 @@ thompson_matching = function(prior_data, U, V,
     # alpha is intercept, beta the other components
     betadraw = betadraws[1,]
     
-    predictions_all = predictions_all_combinations(betadraw, U$U, V$V) 
+    predictions_all = predictions_all_combinations(betadraw, U, V) 
 
     optimal_matching = 
       optimal_matching_lpSolve(predictions_all, nrow(U), nrow(V))
