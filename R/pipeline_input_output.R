@@ -32,7 +32,7 @@ prior_data_senders_merge = function(wave) {
     qualtrics_output = output_filepaths %>% 
         map(read_csv) %>% 
         map(~ slice(.x, 3:n())) # dropping the first 2 rows
-        
+    
     # create variables with source filename, gender, country, side of match
     for (i in 1:length(output_filenames)) {
         qualtrics_output[[i]]$sourcefile = output_filenames[i]
@@ -69,7 +69,7 @@ prior_data_recpients_merge = function(wave) {
         qualtrics_output[[i]]$gender = substr(output_filenames[i],1,1)
         qualtrics_output[[i]]$country = substr(output_filenames[i],3,4)
     }
-
+    
     qualtrics_output_receiver = 
         qualtrics_output %>% 
         bind_rows() %>% 
@@ -97,16 +97,16 @@ matching_first_wave = function() {
            V = factor(rep(1:k, length.out = k^2), levels=1:k),
            index_U = rep(1:k, length.out = k^2),
            index_V = rep(1:k, length.out = k^2, each=k)) %>% 
-    write_csv("../Pipeline/Match_files/1_matching.csv")
+        write_csv("../Pipeline/Match_files/1_matching.csv")
 }
 
 # read in prior data, run Thompson sampling, and store result in daily match file
 prior_data_to_matching = function(wave){
     prior_data_path = paste("../Pipeline/Match_files/", wave, 
-                    "_merged_processed_output_receivers", ".csv", sep = "" )
+                            "_merged_processed_output_receivers", ".csv", sep = "" )
     # FOR DEBUGGING ONLY
     prior_data_path = "../Pipeline/Match_files/thompson_test.csv"
-
+    
     # read in prior outcome data
     prior_data = read_csv(prior_data_path) %>% 
         mutate(U=factor(U, levels=1:k), 
@@ -139,9 +139,9 @@ matching_to_sender_surveys = function(wave){
     
     for (i in 1:nrow(matching)) {
         sender_path = paste("../Pipeline/Qualtrics_input/", 
-                               matching[i, "gender"], "-",
-                               matching[i, "country"],
-                               "-1/", sep="")
+                            matching[i, "gender"], "-",
+                            matching[i, "country"],
+                            "-1/", sep="")
         
         write(matching[[i,"string"]], 
               paste(sender_path, matching[[i, "index_U"]], "_recipient.txt", sep=""))
@@ -151,10 +151,10 @@ matching_to_sender_surveys = function(wave){
 
 # read in message file, export sender types and messages to recipient folders
 messages_to_recipient_surveys = function(wave){
-    # # read in compiled data from senders
-    # merged_processed_output_senders =
-    #     read_csv(paste("../Pipeline/Match_files/", wave, 
-    #                    "_merged_processed_output_senders", ".csv", sep = "" ))
+    # read in compiled data from senders
+    merged_processed_output_senders =
+        read_csv(paste("../Pipeline/Match_files/", wave,
+                       "_merged_processed_output_senders", ".csv", sep = "" ))
     
     matching = paste("../Pipeline/Match_files/", wave, 
                      "_matching.csv", sep = "" ) %>% 
@@ -164,19 +164,24 @@ messages_to_recipient_surveys = function(wave){
     
     for (i in 1:nrow(matching)) {
         recipient_path = paste("../Pipeline/Qualtrics_input/", 
-                            matching[i, "gender"], "-",
-                            matching[i, "country"],
-                            "-2/", sep="")
+                               matching[i, "gender"], "-",
+                               matching[i, "country"],
+                               "-2/", sep="")
         
         write(matching[[i,"string"]], 
               paste(recipient_path, matching[[i, "index_V"]], "_sender.txt", sep=""))
         
-# TO BE CONTINUED        
-        # message = merged_processed_output_senders[[i,"Q25"]]
-        # 
-        # write(matching[[i,"string"]], recipient_path)
+        message_row =
+            merged_processed_output_senders %>% 
+            filter(ID == matching[[i, "index_U"]],
+                   U == matching[[i, "U"]]) %>% 
+            slice(1)
+        
+        if (nrow(message_row) >0) {
+            write(message_row$Q25,
+                  paste(recipient_path, matching[[i, "index_V"]], "_msg.txt", sep=""))
+        }
     }
-    
 }
 
 
