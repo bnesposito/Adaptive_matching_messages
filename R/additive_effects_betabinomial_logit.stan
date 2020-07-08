@@ -9,19 +9,32 @@ data {
 parameters {
   real<lower=0> betabar;
   real<lower=0> tau[3]; //variance components for beta
-  reall<lower=0> m; // precision parameter for Beta-Binomial outcome distribution
+  real<lower=0> m; // precision parameter for Beta-Binomial outcome distribution
   real eta_U[dim_U]; //unscaled  effects
   real eta_V[dim_V]; //unscaled  effects
   real eta_UV[dim_U * dim_V]; //remainder effect 
 }
 transformed parameters {
   vector[dim_U*dim_V] beta;
+  real p[N]; // outcome probabilities
+  real alpha_BB[N]; // outcome Beta-Binomial parameter
+  real beta_BB[N]; // outcome Beta-Binomial parameter
+    
   for (i in 1:dim_U){
       for (j in 1:dim_V){    
         beta[i + dim_V*(j-1)] = betabar +
           tau[1] * eta_U[i] + tau[2] * eta_V[j] + tau[3] * eta_UV[i + dim_V*(j-1)];
       }
   } 
+  
+  p =inv_logit(to_array_1d(X * beta));
+  
+  for (n in 1:N){
+    alpha_BB[n] = p[n]*m;
+    beta_BB[n] = (1-p[n])*m;
+  }
+  
+
 }
 model {
   target += std_normal_lpdf(betabar); // prior log-density for variance parameters
@@ -31,6 +44,6 @@ model {
   target += std_normal_lpdf(eta_V);       // prior log-density
   target += std_normal_lpdf(eta_UV);       // prior log-density
   
-  target += binomial_logit_lpmf(Y | n_Y, to_array_1d(X * beta)); // log-likelihood
+  target += beta_binomial_lpmf(Y | n_Y, alpha_BB, beta_BB); // log-likelihood
 }
 

@@ -12,6 +12,10 @@
   DONE
 - text message: use Q25
   DONE
+  
+  
+- model for Y: maybe include a match specific effect into logit?
+    DONE
 
 
 Questions:
@@ -41,7 +45,6 @@ every day run R code once the data are in.
 
 
 
-model for Y: maybe include a match specific effect into logit?
 
 Daniel Q: always delete the first 2 rows?
 

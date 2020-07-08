@@ -5,8 +5,7 @@ library(lpSolve) # For finding the optimal matching
 # compile model on start-up to avoid repeated re-compilation
 # store it, so it can be re-used next time, if the stan file has not changed
 rstan_options(auto_write = TRUE)
-logit_stan_model = stan_model("additive_effects_logit.stan")
-binomial_logit_stan_model = stan_model("additive_effects_binomial_logit.stan")
+betabinomial_logit_stan_model = stan_model("additive_effects_betabinomial_logit.stan")
 
 
 
@@ -28,7 +27,7 @@ coefficient_posterior = function(data, n_Y= 13*4) {
   )
   
   sampling(
-    binomial_logit_stan_model,
+    betabinomial_logit_stan_model,
     data = data_list,
     show_messages = F, # suppress output
     refresh = 0, # suppress output
