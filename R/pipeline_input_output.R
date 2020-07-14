@@ -52,7 +52,7 @@ prior_data_senders_merge = function(wave) {
 
 
 # read in qualtrics output files and merge them into consolidated and cleaned file
-prior_data_recpients_merge = function(wave) {
+prior_data_recipients_merge = function(wave) {
     output_filenames = list.files("../Pipeline/Qualtrics_output/Receivers/")
     
     output_filepaths = paste("../Pipeline/Qualtrics_output/Receivers/", 
@@ -70,23 +70,23 @@ prior_data_recpients_merge = function(wave) {
         qualtrics_output[[i]]$country = substr(output_filenames[i],3,4)
     }
     
-    qualtrics_output_receiver = 
+    qualtrics_output_recipient = 
         qualtrics_output %>% 
         bind_rows() %>% 
         left_join(type_codes,by = c("gender", "country")) # merge in type to construct U and V 
     
     
     # calculate outcome variable as sum of scores for recipients
-    Y=qualtrics_output_receiver %>% 
+    Y=qualtrics_output_recipient %>% 
         select(paste("Q", 101:113, sep=""))%>% 
         sapply(as.numeric) %>% 
         rowSums() - 13 # so that values start at 0
     
-    # export merged receivers file    
-    qualtrics_output_receiver %>% 
+    # export merged recipients file    
+    qualtrics_output_recipient %>% 
         mutate(Y=Y) %>% 
         write_csv(paste("../Pipeline/Match_files/", wave, 
-                        "_merged_processed_output_receivers", ".csv", sep = "" ))  
+                        "_merged_processed_output_recipients", ".csv", sep = "" ))  
     
 }
 
@@ -103,7 +103,7 @@ matching_first_wave = function() {
 # read in prior data, run Thompson sampling, and store result in daily match file
 prior_data_to_matching = function(wave){
     prior_data_path = paste("../Pipeline/Match_files/", wave, 
-                            "_merged_processed_output_receivers", ".csv", sep = "" )
+                            "_merged_processed_output_recipients", ".csv", sep = "" )
     # FOR DEBUGGING ONLY
     prior_data_path = "../Pipeline/Match_files/thompson_test.csv"
     
@@ -178,7 +178,7 @@ messages_to_recipient_surveys = function(wave){
             slice(1)
         
         if (nrow(message_row) >0) {
-            write(message_row$Q25,
+            write(message_row$message_final,
                   paste(recipient_path, matching[[i, "index_V"]], "_msg.txt", sep=""))
         }
     }
@@ -198,14 +198,14 @@ update_github = function(repo = "../") {
 
 
 # Master functions for the two stages of each wave in the experiment
-sender_to_receiver_master = function(wave) {
+sender_to_recipients_master = function(wave) {
     prior_data_senders_merge(wave)
     messages_to_recipient_surveys(wave)
     update_github()
 }
 
-receiver_to_sender_master = function(wave) {
-    prior_data_receivers_merge(wave)
+recipients_to_sender_master = function(wave) {
+    prior_data_recipients_merge(wave)
     prior_data_to_matching(wave)
     matching_to_sender_surveys(wave)
     update_github()
