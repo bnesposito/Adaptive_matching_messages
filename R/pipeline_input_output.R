@@ -21,6 +21,29 @@ type_codes = tibble(
     V=1:4
 )
 
+
+
+# clear out all the Qualtrics input files, for a clean slate
+clear_subfolders = function(path="../Pipeline/Qualtrics_input/"){
+    filelist=list.files(path, recursive=T)
+    
+    walk(paste(path, filelist, sep=""),
+         file.remove)
+}
+
+
+# commit and push all files in Qualtrics_input folder to Github
+update_github = function(repo = "../") {
+    git_add(files = "*", repo = repo)
+    
+    git_commit(repo = repo,
+               message = paste0("Update: ", Sys.time()))
+    
+    # this uses my stored ssh key
+    git_push(repo = repo)
+}
+
+
 # read in qualtrics output files and merge them into consolidated and cleaned file
 prior_data_senders_merge = function(wave) {
     output_filenames = list.files("../Pipeline/Qualtrics_output/Senders/")
@@ -73,7 +96,18 @@ prior_data_recipients_merge = function(wave) {
     qualtrics_output_recipient = 
         qualtrics_output %>% 
         bind_rows() %>% 
-        left_join(type_codes,by = c("gender", "country")) # merge in type to construct U and V 
+        left_join(type_codes,by = c("gender", "country")) %>%  # merge in type to construct V %>% 
+        select(-U) %>% 
+        mutate(ID = as.numeric(ID))
+
+    #merge in matching by recipient ID and recipient type
+    matching = read_csv(paste("../Pipeline/Match_files/", wave, "_matching.csv", sep = "" )) %>% 
+        rename(ID = index_V)
+    
+    qualtrics_output_recipient = qualtrics_output_recipient %>% 
+        left_join(matching, by = c("V", "ID")) %>% 
+        filter(ID <= wave*4)
+# TBC: (2) deal with multiple waves. 
     
     
     # calculate outcome variable as sum of scores for recipients
@@ -92,21 +126,19 @@ prior_data_recipients_merge = function(wave) {
 
 
 # Function to create the match and assignment for the first wave senders
-matching_first_wave = function() {
+matching_uniform = function(wave) {
     tibble(U = factor(rep(1:k, length.out = k^2, each=k), levels=1:k),
            V = factor(rep(1:k, length.out = k^2), levels=1:k),
-           index_U = rep(1:k, length.out = k^2),
-           index_V = rep(1:k, length.out = k^2, each=k)) %>% 
-        write_csv("../Pipeline/Match_files/1_matching.csv")
+           index_U = 4*(wave-1) + rep(1:k, length.out = k^2),
+           index_V = 4*(wave-1) + rep(1:k, length.out = k^2, each=k)) %>% 
+        write_csv(paste("../Pipeline/Match_files/", wave, "_matching.csv", sep = "" ))
 }
 
 # read in prior data, run Thompson sampling, and store result in daily match file
 prior_data_to_matching = function(wave){
     prior_data_path = paste("../Pipeline/Match_files/", wave, 
                             "_merged_processed_output_recipients", ".csv", sep = "" )
-    # FOR DEBUGGING ONLY
-    prior_data_path = "../Pipeline/Match_files/thompson_test.csv"
-    
+
     # read in prior outcome data
     prior_data = read_csv(prior_data_path) %>% 
         mutate(U=factor(U, levels=1:k), 
@@ -114,16 +146,16 @@ prior_data_to_matching = function(wave){
     
     # generate types for new wave
     U= tibble(U=factor(rep(1:k, length.out = k^2), levels=1:k),
-              index_U = (wave-1)*k + rep(1:k, length.out = k^2, each=k))
+              index_U = (wave)*k + rep(1:k, each=k))
     V= tibble(V=factor(rep(1:k, length.out = k^2), levels=1:k),
-              index_V = (wave-1)*k + rep(1:k, length.out = k^2, each=k))
+              index_V = (wave)*k + rep(1:k, each=k))
     
     # calculate thompson matching for the next wave
     best_matching = thompson_matching(prior_data, U, V)
     
     # write to dated file with new matching
     write_csv(best_matching$matching,
-              paste("../Pipeline/Match_files/", wave, "_matching.csv", sep = "" ))
+              paste("../Pipeline/Match_files/", wave+1, "_matching.csv", sep = "" ))
 }
 
 
@@ -185,17 +217,6 @@ messages_to_recipient_surveys = function(wave){
 }
 
 
-# commit and push all files in Qualtrics_input folder to Github
-update_github = function(repo = "../") {
-    git_add(files = "*", repo = repo)
-    
-    git_commit(repo = repo,
-               message = paste0("Update: ", Sys.time()))
-    
-    # this uses my stored ssh key
-    git_push(repo = repo)
-}
-
 
 # Master functions for the two stages of each wave in the experiment
 sender_to_recipients_master = function(wave) {
@@ -207,14 +228,7 @@ sender_to_recipients_master = function(wave) {
 recipients_to_sender_master = function(wave) {
     prior_data_recipients_merge(wave)
     prior_data_to_matching(wave)
-    matching_to_sender_surveys(wave)
+    matching_to_sender_surveys(wave+1)
     update_github()
 }
 
-# clear out all the Qualtrics input files, for a clean slate
-clear_subfolders = function(path="../Pipeline/Qualtrics_input/"){
-    filelist=list.files(path, recursive=T)
-    
-    walk(paste(path, filelist, sep=""),
-         file.remove)
-}

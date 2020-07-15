@@ -23,7 +23,7 @@ coefficient_posterior = function(data, n_Y= 13*4) {
     dim_V = length(levels(factor(data$V))),
     n_Y = n_Y, #maximum value that Y can take
     X = predictor_matrix(data),
-    Y = data$y
+    Y = data$Y
   )
   
   sampling(
