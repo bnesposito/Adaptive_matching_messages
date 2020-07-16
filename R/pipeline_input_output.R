@@ -44,6 +44,15 @@ update_github = function(repo = "../") {
 }
 
 
+# Function to create the match and assignment for the first wave senders
+matching_uniform = function(wave) {
+    tibble(U = factor(rep(1:k, length.out = k^2, each=k), levels=1:k),
+           V = factor(rep(1:k, length.out = k^2), levels=1:k),
+           index_U = 4*(wave-1) + rep(1:k, length.out = k^2),
+           index_V = 4*(wave-1) + rep(1:k, length.out = k^2, each=k)) %>% 
+        write_csv(paste("../Pipeline/Match_files/", wave, "_matching.csv", sep = "" ))
+}
+
 # read in qualtrics output files and merge them into consolidated and cleaned file
 prior_data_senders_merge = function(wave) {
     output_filenames = list.files("../Pipeline/Qualtrics_output/Senders/")
@@ -54,7 +63,7 @@ prior_data_senders_merge = function(wave) {
     # Reading in all files in output folder 
     qualtrics_output = output_filepaths %>% 
         map(read_csv) %>% 
-        map(~ slice(.x, 3:n())) # dropping the first 2 rows
+        map(~ slice(.x, 3:6)) # dropping the first 2 rows, and all but the first 4 observations
     
     # create variables with source filename, gender, country, side of match
     for (i in 1:length(output_filenames)) {
@@ -84,7 +93,7 @@ prior_data_recipients_merge = function(wave) {
     # Reading in all files in output folder 
     qualtrics_output = output_filepaths %>% 
         map(read_csv) %>% 
-        map(~ slice(.x, 3:n())) # dropping the first 2 rows
+        map(~ slice(.x, 3:6)) # dropping the first 2 rows, and all but the first 4 observations
     
     # create variables with source filename, gender, country, side of match
     for (i in 1:length(output_filenames)) {
@@ -105,10 +114,7 @@ prior_data_recipients_merge = function(wave) {
         rename(ID = index_V)
     
     qualtrics_output_recipient = qualtrics_output_recipient %>% 
-        left_join(matching, by = c("V", "ID")) %>% 
-        filter(ID <= wave*4)
-# TBC: (2) deal with multiple waves. 
-    
+        left_join(matching, by = c("V", "ID"))
     
     # calculate outcome variable as sum of scores for recipients
     Y=qualtrics_output_recipient %>% 
@@ -125,14 +131,6 @@ prior_data_recipients_merge = function(wave) {
 }
 
 
-# Function to create the match and assignment for the first wave senders
-matching_uniform = function(wave) {
-    tibble(U = factor(rep(1:k, length.out = k^2, each=k), levels=1:k),
-           V = factor(rep(1:k, length.out = k^2), levels=1:k),
-           index_U = 4*(wave-1) + rep(1:k, length.out = k^2),
-           index_V = 4*(wave-1) + rep(1:k, length.out = k^2, each=k)) %>% 
-        write_csv(paste("../Pipeline/Match_files/", wave, "_matching.csv", sep = "" ))
-}
 
 # read in prior data, run Thompson sampling, and store result in daily match file
 prior_data_to_matching = function(wave){
@@ -219,13 +217,13 @@ messages_to_recipient_surveys = function(wave){
 
 
 # Master functions for the two stages of each wave in the experiment
-sender_to_recipients_master = function(wave) {
+senders_to_recipients_master = function(wave) {
     prior_data_senders_merge(wave)
     messages_to_recipient_surveys(wave)
     update_github()
 }
 
-recipients_to_sender_master = function(wave) {
+recipients_to_senders_master = function(wave) {
     prior_data_recipients_merge(wave)
     prior_data_to_matching(wave)
     matching_to_sender_surveys(wave+1)
