@@ -1,0 +1,95 @@
+StartDate,EndDate,Status,Progress,Duration (in seconds),Finished,RecordedDate,ResponseId,DistributionChannel,UserLanguage,Q3,Q4,Q24,Q31_First Click,Q31_Last Click,Q31_Page Submit,Q31_Click Count,Q32,message_final,SC0,ID,Recipient_Demographics,backbutton
+Start Date,End Date,Response Type,Progress,Duration (in seconds),Finished,Recorded Date,Response ID,Distribution Channel,User Language,Please note that you must be 18 years of age or older to participate in this study.,"If you have read the information above and agree to participate with the understanding that the data (including any personal data) you submit will be processed accordingly, please check the relevant box below to get started.","It is important that you are aware of who you are writing the message 
+to. Please click on the correct description of the recipient of your 
+message.",Timing - First Click,Timing - Last Click,Timing - Page Submit,Timing - Click Count,"Please write your message of advice in the box below. It should be about reconciling online work with family obligations, and it should be based on your own experiences. The person who will receive your message is an  and already has experience working on MTurk.
+
+ 
+
+You will be able to submit your message after 5 minutes. Please write 200 words or more.
+
+ 
+Your word count is: 0","Do you want to submit your message?
+
+ 
+
+No changes can be made after submitting. Remember that your message needs to be 200 words or more.
+ 
+
+To submit your message, click on the ""Submit"" button below.
+
+ 
+
+Your word count is: 0",Score,ID,Recipient_Demographics,backbutton
+"{""ImportId"":""startDate"",""timeZone"":""America/Denver""}","{""ImportId"":""endDate"",""timeZone"":""America/Denver""}","{""ImportId"":""status""}","{""ImportId"":""progress""}","{""ImportId"":""duration""}","{""ImportId"":""finished""}","{""ImportId"":""recordedDate"",""timeZone"":""America/Denver""}","{""ImportId"":""_recordId""}","{""ImportId"":""distributionChannel""}","{""ImportId"":""userLanguage""}","{""ImportId"":""QID7""}","{""ImportId"":""QID8""}","{""ImportId"":""QID20""}","{""ImportId"":""QID25_FIRST_CLICK""}","{""ImportId"":""QID25_LAST_CLICK""}","{""ImportId"":""QID25_PAGE_SUBMIT""}","{""ImportId"":""QID25_CLICK_COUNT""}","{""ImportId"":""QID1_TEXT""}","{""ImportId"":""QID24_TEXT""}","{""ImportId"":""SC_cHAjHEeBurP7KDz""}","{""ImportId"":""ID""}","{""ImportId"":""Recipient_Demographics""}","{""ImportId"":""backbutton""}"
+2020-07-21 13:55:16,2020-07-21 14:18:26,IP Address,100,1389,True,2020-07-21 14:18:26,R_31RFGltwMPPJSL9,anonymous,EN,I certify that I am 18 years of age or older.,"Yes, I agree to take part.",None of the above,72.105,581.005,583.095,38,"Hi
+
+Advantages of online working with family obligations:1.you can help the family members by earning money and giving them a good Financial support.
+2 YOU can help ourselves as a busy person instead of roaming outside by wasting time.
+3. Learn about the world and it's surrounding.
+4.bLearn about new apps and get experience
+
+
+Disadvantages:
+1. You need to constantly monitor or to work being available every time.
+2. You can have some health effects also like back pain,leg cramps etc.,
+3. You have to work on the topic which you don't like based on the requester as a requestee.
+","Hi
+
+Advantages of online working with family obligations:
+1.You can help the family members by earning money and giving them a good Financial support.
+2 YOU can help ourselves as a busy person instead of roaming outside by wasting time.
+3. Learn about the world and it's surrounding.
+4. Learn about new apps and get experience
+5. Feels enthusiastic,if you like the topic and feel like you can work more like this type of work.
+6. You can just complete the work in any given time instead of some person is monitoring you constantly from the back.
+7. Can enjoy the break at any time.
+8. You can work from any area on any device.
+9. Time will not be wasted in traveling.
+
+
+Disadvantages:
+1. You need to constantly monitor or to work being available every time.
+2. You can have some health effects also like back pain,leg cramps etc.,
+3. You have to work on the topic which you don't like based on the requester as a requestee.
+4. You won't be able to give much time to your family and friends.
+5.Sometimes need to work for hours to complete the work given.
+6. Less interaction on general topics.
+
+",0,5,"<object width=""80"" height=""20"" type=""text/plain"" data=""https://raw.githubusercontent.com/maxkasy/Adaptive_matching_messages/master/Pipeline/Qualtrics_input/F-US-1/5_recipient.txt"" border=""0"" >
+</object>",gone
+2020-07-21 15:05:54,2020-07-21 15:12:39,IP Address,100,405,True,2020-07-21 15:12:40,R_esW1FG1F7qTJ0uB,anonymous,EN,I certify that I am 18 years of age or older.,"Yes, I agree to take part.",None of the above,1.976,81.324,336.104,9,"A user of Mechanical Turk can be either a ""Worker"" (contractor) or a ""Requester"" (employer). Workers have access to a dashboard that displays three sections: total earnings, HIT status and HIT totals. Workers set their own hours and are not under any obligation to accept any particular task. Workers are classified by Amazon as contractors rather than employees, and refuse to file forms or pay payroll taxes. This is aimed to evade the minimum wage, overtime, and workers compensation. Workers must report their income as self-employment income. In 2013, the average wage for the multiple microtasks assigned, if performed quickly, is about one dollar an hour, with each task averaging a few cents.Workers can have a postal address anywhere in the world. Payment for completing tasks can be redeemed on Amazon.com via gift certificate (gift certificates are the only payment option available to international workers, apart from India) or be later transferred to a Worker's U.S. bank account.
+
+Requesters can ask that Workers fulfill qualifications before engaging in a task, and they can set up a test in order to verify the qualification. They can also accept or reject the result sent by the Worker, which affects the Worker's reputation. As of April 2019, Requesters paid Amazon a minimum 20% commission on the price of successfully completed jobs, with increased amounts for additional services. Requesters can use the Amazon Mechanical Turk API to programmatically integrate the results of that work directly into their business processes and systems. When employers set up their job, they must specify
+
+how much are they paying for each HIT accomplished,
+how many workers they want to work on each HIT,
+maximum time a worker has to work on a single task,
+how much time the workers have to complete the work,
+as well as the specific details about the job they want to be completed.","A user of Mechanical Turk can be either a ""Worker"" (contractor) or a ""Requester"" (employer). Workers have access to a dashboard that displays three sections: total earnings, HIT status and HIT totals. Workers set their own hours and are not under any obligation to accept any particular task. Workers are classified by Amazon as contractors rather than employees, and refuse to file forms or pay payroll taxes. This is aimed to evade the minimum wage, overtime, and workers compensation. Workers must report their income as self-employment income. In 2013, the average wage for the multiple microtasks assigned, if performed quickly, is about one dollar an hour, with each task averaging a few cents.Workers can have a postal address anywhere in the world. Payment for completing tasks can be redeemed on Amazon.com via gift certificate (gift certificates are the only payment option available to international workers, apart from India) or be later transferred to a Worker's U.S. bank account.
+
+Requesters can ask that Workers fulfill qualifications before engaging in a task, and they can set up a test in order to verify the qualification. They can also accept or reject the result sent by the Worker, which affects the Worker's reputation. As of April 2019, Requesters paid Amazon a minimum 20% commission on the price of successfully completed jobs, with increased amounts for additional services. Requesters can use the Amazon Mechanical Turk API to programmatically integrate the results of that work directly into their business processes and systems. When employers set up their job, they must specify
+
+how much are they paying for each HIT accomplished,
+how many workers they want to work on each HIT,
+maximum time a worker has to work on a single task,
+how much time the workers have to complete the work,
+as well as the specific details about the job they want to be completed.",0,6,"<object width=""80"" height=""20"" type=""text/plain"" data=""https://raw.githubusercontent.com/maxkasy/Adaptive_matching_messages/master/Pipeline/Qualtrics_input/F-US-1/6_recipient.txt"" border=""0"" >
+</object>",gone
+2020-07-21 15:25:53,2020-07-21 15:31:39,IP Address,100,346,True,2020-07-21 15:31:40,R_1H1chiqoH8mVhfX,anonymous,EN,I certify that I am 18 years of age or older.,"Yes, I agree to take part.",None of the above,11.997,219.474,314.086,37,"The absence, inadequacy or inaccessibility of minding and support structures for children or old people obliges women with family responsibilities to work part
+de-ser-blog-reconciling-work-and-family-life For example, the kindergarten or daycare center may sometimes go on strike. The Mannheim and Penzberg
+experienced in its efforts to reconcile work and family life. 5. WORK ... include a general commitment to reconciliation of work and family life as a mainstream trend toward My partner works part-time now and he would not take parental leave.
+ The work-life balance definition is the achievement of harmony a satisfying professional life means that their own work brings visible and of many employees is based on the strong support of their families.If the employee then neglected his/her external
+The indicator is based on the European System of Accounts should be to raise the employment rate to as close to 70% as possible by 2010 and widespread in sectors that experience seasonal activity ... reconciling work and family and social commitments outside elderly people live in their own household in northern.
+They've discovered through hard experience that prospering in the senior ranks They also vigilantly manage their own human capital, endeavoring to give both in our research said they reconcile their professional and personal lives.When work and family responsibilities collide, for example, ","The absence, inadequacy or inaccessibility of minding and support structures for children or old people obliges women with family responsibilities to work part
+de-ser-blog-reconciling-work-and-family-life For example, the kindergarten or daycare center may sometimes go on strike. The Mannheim and Penzberg
+experienced in its efforts to reconcile work and family life. 5. WORK ... include a general commitment to reconciliation of work and family life as a mainstream trend toward My partner works part-time now and he would not take parental leave.
+ The work-life balance definition is the achievement of harmony a satisfying professional life means that their own work brings visible and of many employees is based on the strong support of their families.If the employee then neglected his/her external
+The indicator is based on the European System of Accounts should be to raise the employment rate to as close to 70% as possible by 2010 and widespread in sectors that experience seasonal activity ... reconciling work and family and social commitments outside elderly people live in their own household in northern.
+They've discovered through hard experience that prospering in the senior ranks They also vigilantly manage their own human capital, endeavoring to give both in our research said they reconcile their professional and personal lives.When work and family responsibilities collide, for example, ",0,7,"<object width=""80"" height=""20"" type=""text/plain"" data=""https://raw.githubusercontent.com/maxkasy/Adaptive_matching_messages/master/Pipeline/Qualtrics_input/F-US-1/7_recipient.txt"" border=""0"" >
+</object>",gone
+2020-07-21 16:47:14,2020-07-21 16:53:07,IP Address,100,352,True,2020-07-21 16:53:07,R_1rjltipQZAq6gcW,anonymous,EN,I certify that I am 18 years of age or older.,"Yes, I agree to take part.",None of the above,24.817,222.153,309.616,14,"amazon mechanial turk online work aldry have worked on tv very good.its very useull.Work weeks are when most of us tend to be the busiest. By preparing for Monday’s arrival, you can ease the stress of the week ahead. Keep a family calendar posted on the fridge. On Sunday, look at what’s on tap for the week and plan how you are going to manage the week. Where you can, make meals on the weekend and put them in the refrigerator or freezer for a quick reheat on a busy evening. This can be an activity where you can involve and enlist your older children’s help. Before shopping for groceries, get your cookbooks out and make a list of several meals for the following week and make your grocery list from your menu list. After work stress is often more in deciding what to make for supper than in actually making it. If you go home for lunch, do some initial meal preparation then so that it cuts down on your after-work meal prep time.With so many demands on our time, it’s hard to be everything to everyone. You may be juggling a number of roles and goals in your life. You want to be successful at work, enjoy a healthy couple relationship, be an involved parent. You may have goals of furthering your education, maintaining a home, contributing to your community, keeping to a fitness regimen, saving for early retirement. Further, you may be juggling extended family issues, like caring for aging parents or dealing with an illness in the family. All of these things take your time and energy and often run into conflict with each other. As there are only 24 hours in a day, you may have to think about your values and set some priorities based on those values. For example, if “being an involved parent” is a priority for you – setting aside time each night to play with your children might take priority over working those over-time hours in order to finance a bigger home.
+
+","amazon mechanial turk online work aldry have worked on tv very good.its very useull.Work weeks are when most of us tend to be the busiest. By preparing for Monday’s arrival, you can ease the stress of the week ahead. Keep a family calendar posted on the fridge. On Sunday, look at what’s on tap for the week and plan how you are going to manage the week. Where you can, make meals on the weekend and put them in the refrigerator or freezer for a quick reheat on a busy evening. This can be an activity where you can involve and enlist your older children’s help. Before shopping for groceries, get your cookbooks out and make a list of several meals for the following week and make your grocery list from your menu list. After work stress is often more in deciding what to make for supper than in actually making it. If you go home for lunch, do some initial meal preparation then so that it cuts down on your after-work meal prep time.With so many demands on our time, it’s hard to be everything to everyone. You may be juggling a number of roles and goals in your life. You want to be successful at work, enjoy a healthy couple relationship, be an involved parent. You may have goals of furthering your education, maintaining a home, contributing to your community, keeping to a fitness regimen, saving for early retirement. Further, you may be juggling extended family issues, like caring for aging parents or dealing with an illness in the family. All of these things take your time and energy and often run into conflict with each other. As there are only 24 hours in a day, you may have to think about your values and set some priorities based on those values. For example, if “being an involved parent” is a priority for you – setting aside time each night to play with your children might take priority over working those over-time hours in order to finance a bigger home.
+
+",0,8,"<object width=""80"" height=""20"" type=""text/plain"" data=""https://raw.githubusercontent.com/maxkasy/Adaptive_matching_messages/master/Pipeline/Qualtrics_input/F-US-1/8_recipient.txt"" border=""0"" >
+</object>",gone
