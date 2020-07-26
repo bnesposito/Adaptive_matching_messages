@@ -164,9 +164,9 @@ prior_data_to_matching = function(wave){
         group_by(U,V) %>% 
         summarise(ybar = mean(Y)/(4*13)) %>% 
         ungroup() %>% 
-        mutate(yhathat=plogis(best_matching$beta_hat))
+        mutate(yhat=plogis(best_matching$beta_hat))
     
-    write_csv(best_matching$matching,
+    write_csv(sample_averages,
               paste("../Pipeline/Figures/", wave, "_estimates.csv", sep = "" ))
   
     p1=plot_prediction_matrix(best_matching$beta_hat,
