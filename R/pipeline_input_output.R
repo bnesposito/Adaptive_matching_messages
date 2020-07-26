@@ -107,20 +107,24 @@ prior_data_recipients_merge = function(wave) {
         bind_rows() %>% 
         left_join(type_codes,by = c("gender", "country")) %>%  # merge in type to construct V %>% 
         select(-U) %>% 
-        mutate(ID = as.numeric(ID))
+        mutate(ID = as.numeric(ID), U=as.numeric(NA), index_U=as.numeric(NA))
 
     #merge in matching by recipient ID and recipient type
-    matching = read_csv(paste("../Pipeline/Match_files/", wave, "_matching.csv", sep = "" )) %>% 
-        rename(ID = index_V)
-    
-    qualtrics_output_recipient = qualtrics_output_recipient %>% 
-        left_join(matching, by = c("V", "ID"))
+    for (w in 1:wave) {
+        matching = read_csv(paste("../Pipeline/Match_files/", w, "_matching.csv", sep = "" )) %>% 
+            rename(ID = index_V, U_new=U, index_U_new=index_U)
+        qualtrics_output_recipient = qualtrics_output_recipient %>% 
+            left_join(matching, by = c("V", "ID")) %>% 
+            mutate(U= if_else(!is.na(U_new), U_new, U),
+                   index_U= if_else(!is.na(index_U_new), index_U_new, index_U)) %>% 
+            select(-U_new, -index_U_new)
+    }
     
     # calculate outcome variable as sum of scores for recipients
     Y=qualtrics_output_recipient %>% 
         select(paste("Q", 101:113, sep=""))%>% 
         sapply(as.numeric) %>% 
-        rowSums() - 13 # so that values start at 0
+        rowSums() 
     
     # export merged recipients file    
     qualtrics_output_recipient %>% 
@@ -154,6 +158,21 @@ prior_data_to_matching = function(wave){
     # write to dated file with new matching
     write_csv(best_matching$matching,
               paste("../Pipeline/Match_files/", wave+1, "_matching.csv", sep = "" ))
+    
+    # print figures of current estimates and sample averages
+    sample_averages = prior_data %>% 
+        group_by(U,V) %>% 
+        summarise(ybar = mean(Y)/(4*13))
+  
+    p1=plot_prediction_matrix(best_matching$beta_hat,
+                              k1=k, k2=k,
+                              title = "Estimated parameters")
+    p2=plot_prediction_matrix(qlogis(sample_averages$ybar),
+                              k1=k, k2=k,
+                              title = "Sample average outcomes")
+    ggsave(paste("../Pipeline/Figures/", wave, "_estimates.pdf", sep = "" ),
+            (p1 | p2),
+            width=7, height=4)
 }
 
 

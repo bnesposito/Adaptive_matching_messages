@@ -1,6 +1,7 @@
 library(tidyverse)
 library(rstan) # For MCMC
 library(lpSolve) # For finding the optimal matching
+library(patchwork) # For arranging plots
 
 # compile model on start-up to avoid repeated re-compilation
 # store it, so it can be re-used next time, if the stan file has not changed
@@ -43,7 +44,6 @@ coefficient_posterior = function(data, n_Y= 13*4) {
 predictions_all_combinations = function(beta, U, V) { 
     all_combinations = merge(U %>% mutate(i=row_number()), 
                              V %>% mutate(j=row_number()))
-    
     # add predictions from logit model
     all_combinations %>%
         mutate(yhat = plogis(
@@ -54,8 +54,8 @@ predictions_all_combinations = function(beta, U, V) {
 # The following plots predicted values for the cross-combinations 
 # of setting exactly one of the variables in U and in V equal to 1
 plot_prediction_matrix <- function(beta, k1, k2, title = "Predicted outcomes") {
-  U = 1:k1
-  V = 1:k2
+  U = tibble(U = factor(1:k1))
+  V = tibble(V = factor(1:k2))
   predictions_all = predictions_all_combinations(beta, U, V)
   
   ggplot(predictions_all, aes(x = i, y = j, z = yhat)) +
