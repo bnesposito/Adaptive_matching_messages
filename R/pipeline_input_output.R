@@ -162,7 +162,12 @@ prior_data_to_matching = function(wave){
     # print figures of current estimates and sample averages
     sample_averages = prior_data %>% 
         group_by(U,V) %>% 
-        summarise(ybar = mean(Y)/(4*13))
+        summarise(ybar = mean(Y)/(4*13)) %>% 
+        ungroup() %>% 
+        mutate(yhathat=plogis(best_matching$beta_hat))
+    
+    write_csv(best_matching$matching,
+              paste("../Pipeline/Figures/", wave, "_estimates.csv", sep = "" ))
   
     p1=plot_prediction_matrix(best_matching$beta_hat,
                               k1=k, k2=k,
