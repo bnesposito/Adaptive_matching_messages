@@ -1,9 +1,0 @@
-A user of Mechanical Turk can be either a "Worker" (contractor) or a "Requester" (employer). Workers have access to a dashboard that displays three sections: total earnings, HIT status and HIT totals. Workers set their own hours and are not under any obligation to accept any particular task. Workers are classified by Amazon as contractors rather than employees, and refuse to file forms or pay payroll taxes. This is aimed to evade the minimum wage, overtime, and workers compensation. Workers must report their income as self-employment income. In 2013, the average wage for the multiple microtasks assigned, if performed quickly, is about one dollar an hour, with each task averaging a few cents.Workers can have a postal address anywhere in the world. Payment for completing tasks can be redeemed on Amazon.com via gift certificate (gift certificates are the only payment option available to international workers, apart from India) or be later transferred to a Worker's U.S. bank account.
-
-Requesters can ask that Workers fulfill qualifications before engaging in a task, and they can set up a test in order to verify the qualification. They can also accept or reject the result sent by the Worker, which affects the Worker's reputation. As of April 2019, Requesters paid Amazon a minimum 20% commission on the price of successfully completed jobs, with increased amounts for additional services. Requesters can use the Amazon Mechanical Turk API to programmatically integrate the results of that work directly into their business processes and systems. When employers set up their job, they must specify
-
-how much are they paying for each HIT accomplished,
-how many workers they want to work on each HIT,
-maximum time a worker has to work on a single task,
-how much time the workers have to complete the work,
-as well as the specific details about the job they want to be completed.

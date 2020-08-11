@@ -15,8 +15,8 @@ k=4
 # type codes to construct types U and V
 type_codes = tibble(
     gender = c("F","F","M","M"),
-    country = c("IN", "US","IN", "US"),
-    string = c("Indian woman", "American woman", "Indian man", "American man"),
+    age = c("YOUNG", "OLD","YOUNG", "OLD"),
+    string = c("woman under 30 years old", "woman over 50 years old", "man under 30 years old", "man over 50 years old"),
     U= 1:4,
     V=1:4
 )
@@ -65,17 +65,17 @@ prior_data_senders_merge = function(wave) {
         map(read_csv) %>% 
         map(~ slice(.x, 3:6)) # dropping the first 2 rows, and all but the first 4 observations
     
-    # create variables with source filename, gender, country, side of match
+    # create variables with source filename, gender, age, side of match
     for (i in 1:length(output_filenames)) {
         qualtrics_output[[i]]$sourcefile = output_filenames[i]
         qualtrics_output[[i]]$gender = substr(output_filenames[i],1,1)
-        qualtrics_output[[i]]$country = substr(output_filenames[i],3,4)
+        qualtrics_output[[i]]$age = substr(output_filenames[i],3,4)
     }
     
     # export merged senders file  
     qualtrics_output %>%         
         bind_rows() %>% 
-        left_join(type_codes,by = c("gender", "country")) %>% # merge in type to construct U and V 
+        left_join(type_codes,by = c("gender", "age")) %>% # merge in type to construct U and V 
         write_csv(paste("../Pipeline/Match_files/", wave, 
                         "_merged_processed_output_senders", ".csv", sep = "" ))  
 }
@@ -95,17 +95,17 @@ prior_data_recipients_merge = function(wave) {
         map(read_csv) %>% 
         map(~ slice(.x, 3:6)) # dropping the first 2 rows, and all but the first 4 observations
     
-    # create variables with source filename, gender, country, side of match
+    # create variables with source filename, gender, age, side of match
     for (i in 1:length(output_filenames)) {
         qualtrics_output[[i]]$sourcefile = output_filenames[i]
         qualtrics_output[[i]]$gender = substr(output_filenames[i],1,1)
-        qualtrics_output[[i]]$country = substr(output_filenames[i],3,4)
+        qualtrics_output[[i]]$age = substr(output_filenames[i],3,4)
     }
     
     qualtrics_output_recipient = 
         qualtrics_output %>% 
         bind_rows() %>% 
-        left_join(type_codes,by = c("gender", "country")) %>%  # merge in type to construct V %>% 
+        left_join(type_codes,by = c("gender", "age")) %>%  # merge in type to construct V %>% 
         select(-U) %>% 
         mutate(ID = as.numeric(ID), U=as.numeric(NA), index_U=as.numeric(NA))
 
@@ -194,9 +194,9 @@ matching_to_sender_surveys = function(wave){
     for (i in 1:nrow(matching)) {
         sender_path = paste("../Pipeline/Qualtrics_input/", 
                             matching[i, "gender"], "-",
-                            matching[i, "country"],
-                            "-1/", sep="")
-        
+                            matching[i, "age"],
+                            "-S/", sep="")
+   
         write(matching[[i,"string"]], 
               paste(sender_path, matching[[i, "index_U"]], "_recipient.txt", sep=""))
     }
@@ -219,8 +219,8 @@ messages_to_recipient_surveys = function(wave){
     for (i in 1:nrow(matching)) {
         recipient_path = paste("../Pipeline/Qualtrics_input/", 
                                matching[i, "gender"], "-",
-                               matching[i, "country"],
-                               "-2/", sep="")
+                               matching[i, "age"],
+                               "-R/", sep="")
         
         write(matching[[i,"string"]], 
               paste(recipient_path, matching[[i, "index_V"]], "_sender.txt", sep=""))
