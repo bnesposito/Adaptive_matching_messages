@@ -69,7 +69,8 @@ prior_data_senders_merge = function(wave) {
     for (i in 1:length(output_filenames)) {
         qualtrics_output[[i]]$sourcefile = output_filenames[i]
         qualtrics_output[[i]]$gender = substr(output_filenames[i],1,1)
-        qualtrics_output[[i]]$age = substr(output_filenames[i],3,4)
+        qualtrics_output[[i]]$age = ifelse(substr(output_filenames[i],3,3)=="Y",
+                                           "YOUNG", "OLD")
     }
     
     # export merged senders file  
@@ -99,7 +100,8 @@ prior_data_recipients_merge = function(wave) {
     for (i in 1:length(output_filenames)) {
         qualtrics_output[[i]]$sourcefile = output_filenames[i]
         qualtrics_output[[i]]$gender = substr(output_filenames[i],1,1)
-        qualtrics_output[[i]]$age = substr(output_filenames[i],3,4)
+        qualtrics_output[[i]]$age = ifelse(substr(output_filenames[i],3,3)=="Y",
+                                           "YOUNG", "OLD")
     }
     
     qualtrics_output_recipient = 
