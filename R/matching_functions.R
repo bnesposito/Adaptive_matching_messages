@@ -33,8 +33,9 @@ coefficient_posterior = function(data, n_Y= 13*4) {
     show_messages = F, # suppress output
     refresh = 0, # suppress output
     seed = 12345,
+    iter = 3000,
     cores = parallel::detectCores(), # use all the available cores
-    control = list(adapt_delta = 0.85) # to reduce "divergent transitions" in mcmc
+    control = list(adapt_delta = 0.95) # to reduce "divergent transitions" in mcmc
   )
 }    
   
@@ -62,7 +63,7 @@ plot_prediction_matrix <- function(beta, k1, k2, title = "Predicted outcomes") {
     geom_tile(aes(fill = yhat))  +
     scale_fill_gradient(low = "white",
                         high = "dodgerblue4",
-                        limits = c(0, 1)) +
+                        limits = c(.5, .75)) +
     coord_fixed() +
     labs(x="U", y="V",
          title = title) + 
